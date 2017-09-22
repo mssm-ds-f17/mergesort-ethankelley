@@ -1,7 +1,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
-
+#include <cstdlib>
 #include "gtest/gtest.h"
 
 using namespace std;
@@ -29,9 +29,15 @@ int random(int maxValue) {
 vector<Thing> makeRandomThings(int count, int maxId)
 {
     vector<Thing> things;
+    int ran;
+    Thing rand;
 
     for (int i = 0; i < count; i++) {
-        things.push_back(Thing{random(maxId)});
+        ran = random(maxId);
+        rand.id=ran;
+
+
+        things.push_back(rand);
     }
 
     for (int i = 0; i < count; i++) {
@@ -53,7 +59,7 @@ bool isLess(const Thing& a, const Thing& b) {
 void printThings(vector<Thing> values)
 {
     for (int i = 0; i < values.size(); i++) {
-        cout << values[i].thingNum <<"(Index "<<i<<") "<< "= " << values[i].id << endl;
+        cout  <<"(Index "<<i<<") "<< "= " << values[i].id << endl;
     }
 }
 
@@ -138,7 +144,7 @@ void merge(vector<Thing>& values, int low, int mid, int high, function<bool(cons
     int j = mid +1;
     // j is used as a counter for the upper half of the vector
 
-    //merge the first two parts into the temporary vector
+    //merge the first two parts in to the temporary vector
 
     while (i <= mid&& j <= high){
         if(comp(values[i], values[j])){
@@ -188,15 +194,24 @@ void merge(vector<Thing>& values, int low, int mid, int high, function<bool(cons
 
 
 void mergeSort(vector<Thing>& values, int low, int high, function<bool(const Thing& a, const Thing& b)> comp) {
+    int mid;
+
+
     if(low < high){
-            int mid=high/2;
-            mergeSort(values, low, mid, isLess );
+            mid=(high+low)/2;
+
+            mergeSort(values, low, mid, comp);
+
+
             //self reference
-            mergeSort(values, mid+1, high, isLess);
+            mergeSort(values, mid+1, high, comp);
+
+
+
 
             //merge to sort the arrays
 
-            merge(values, low,  mid, high, isLess);
+            merge(values, low,  mid, high, comp);
     }
 }
 
@@ -271,11 +286,14 @@ int main(int argc, char **argv) {
 
     vector<Thing> things;
 
-    things =makeRandomThings(8, 10);
+    for(int i = 0; i < 10; i++){
+        Thing a(rand() % 20);
+        things.push_back(a);
+    }
 
     int a=0;
 
-    int b= things.size();
+    int b= things.size()-1;
     printThings(things);
     cout<<endl<<"--------------------------------------"<<endl;
     mergeSort(things, a, b, isLess);
@@ -283,4 +301,3 @@ int main(int argc, char **argv) {
    /* ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();*/
 }
-
